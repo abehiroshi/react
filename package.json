@@ -1,0 +1,22 @@
+{
+  "name": "react-flux",
+  "version": "0.0.1",
+  "description": "react flux",
+  "private": true,
+  "scripts": {
+    "build": "browserify src/index.js -t babelify | uglifyjs > public/bundle.js",
+    "watch": "watchify -d src/index.js -t babelify -o public/bundle.js -v",
+    "server": "browser-sync start --server public --files publid/**/*"
+  },
+  "dependencies": {
+    "immutable": "^3.7.1",
+    "react": "^0.13.1"
+  },
+  "devDependencies": {
+    "babelify": "^6.0.1",
+    "browser-sync": "^2.5.0",
+    "browserify": "^9.0.3",
+    "uglify-js": "^2.4.19",
+    "watchify": "^3.1.0"
+  }
+}
