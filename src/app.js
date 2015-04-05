@@ -9,13 +9,25 @@ export default class TodoList extends React.Component {
     this.state = { record: Immutable.List.of() };
   }
 
-  add() {
-    let text = React.findDOMNode(this.refs.text);
+  load() {
     this.setState({
-      record: this.state.record.push(text.value.trim())
+      text: '',
+      record: Immutable.List.of('a','b','c')
     });
-    text.value = '';
-    text.focus();
+  }
+
+  handleChangeText(e) {
+    this.setState({
+      text: e.target.value
+    });
+  }
+
+  add() {
+    this.setState({
+      record: this.state.record.push(this.state.text)
+    });
+    this.state.text = '';
+    this.refs.text.getDOMNode().focus();
   }
 
   delete(index) {
@@ -28,7 +40,10 @@ export default class TodoList extends React.Component {
     return (
       <div>
         <div>
-          <input type="text" placeholder="" ref="text" />
+          <input type="button" value="load data" onClick={this.load.bind(this)} />
+        </div>
+        <div>
+          <input type="text" placeholder="input.." ref="text" value={this.state.text} onChange={this.handleChangeText.bind(this)} />
           <input type="button" value="add" onClick={this.add.bind(this)} />
         </div>
         <ol>
