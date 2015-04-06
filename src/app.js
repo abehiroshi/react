@@ -2,38 +2,34 @@
 
 import React from 'react';
 import Immutable from 'immutable';
+import io from 'socket.io-client';
 
 export default class TodoList extends React.Component {
+  socket: undefined;
+
   constructor(props) {
     super(props);
     this.state = { record: Immutable.List.of() };
+    this.socket = io();
+    this.socket.on('all data', (msg) => this.setState({record: Immutable.fromJS(msg)}));
   }
 
   load() {
-    this.setState({
-      text: '',
-      record: Immutable.List.of('a','b','c')
-    });
+    this.socket.emit('load data');
   }
 
   handleChangeText(e) {
-    this.setState({
-      text: e.target.value
-    });
+    this.setState({text: e.target.value});
   }
 
   add() {
-    this.setState({
-      record: this.state.record.push(this.state.text)
-    });
-    this.state.text = '';
+    this.socket.emit('add', this.state.text);
+    this.setState({text: ''});
     this.refs.text.getDOMNode().focus();
   }
 
   delete(index) {
-    this.setState({
-      record: this.state.record.delete(index)
-    });
+    this.socket.emit('delete', index);
   }
 
   render() {

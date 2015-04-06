@@ -6,11 +6,14 @@
   "scripts": {
     "build": "browserify src/index.js -t babelify | uglifyjs > public/bundle.js",
     "watch": "watchify -d src/index.js -t babelify -o public/bundle.js -v",
-    "server": "browser-sync start --server public --files public/**/*"
+    "browser": "browser-sync start --server public --files public/**/*",
+    "server": "node index.js"
   },
   "dependencies": {
+    "express": "^4.12.3",
     "immutable": "^3.7.1",
-    "react": "^0.13.1"
+    "react": "^0.13.1",
+    "socket.io": "^1.3.5"
   },
   "devDependencies": {
     "babelify": "^6.0.1",
