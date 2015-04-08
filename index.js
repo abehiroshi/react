@@ -9,7 +9,7 @@ app.get('/*', function(req, res){
   res.sendFile(__dirname + '/public' + req.path);
 });
 
-var data = Immutable.List.of();
+var data = Immutable.List();
 
 io.on('connection', function(socket){
   console.log('a user connected');
@@ -28,7 +28,7 @@ io.on('connection', function(socket){
   socket.on('delete', function(msg){
     console.log('delete: ' + msg);
     if (msg){
-      data = data.delete(msg);
+      data = data.remove(msg);
       socket.emit('all data', data);
       socket.broadcast.emit('all data', data);
     }

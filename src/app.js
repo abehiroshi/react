@@ -2,34 +2,48 @@
 
 import React from 'react';
 import Immutable from 'immutable';
-import io from 'socket.io-client';
+import {workingAction} from './action/WorkingAction';
+import {workingStore} from './store/WorkingStore';
 
 export default class TodoList extends React.Component {
-  socket: undefined;
-
   constructor(props) {
     super(props);
-    this.state = { record: Immutable.List.of() };
-    this.socket = io();
-    this.socket.on('all data', (msg) => this.setState({record: Immutable.fromJS(msg)}));
+    this.state = { text: '', record: Immutable.List() };
   }
 
-  load() {
-    this.socket.emit('load data');
+  componentDidMount(){
+console.log(1)
+    workingAction.init();
+console.log(2)
+    workingStore.on('change', this.load.bind(this));
+console.log(3)
+  }
+
+  load(store) {
+console.log(4)
+console.log(store)
+console.log(store.getData())
+    this.setState({record: store.getData()});
+console.log(5)
   }
 
   handleChangeText(e) {
-    this.setState({text: e.target.value});
+console.log(6)
+    let value = e.target.value;
+console.log(value)
+    this.setState({text: value});
+console.log(7)
   }
 
   add() {
-    this.socket.emit('add', this.state.text);
+    let text = React.findDOMNode(this.refs.text);
+    workingAction.add(text.value);
     this.setState({text: ''});
-    this.refs.text.getDOMNode().focus();
+    text.focus();
   }
 
   delete(index) {
-    this.socket.emit('delete', index);
+    workingAction.delete(index);
   }
 
   render() {
