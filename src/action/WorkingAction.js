@@ -1,26 +1,22 @@
 'use strict'
 
 import io from 'socket.io-client';
-import {appDispatcher} from '../dispatcher/AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
-export default class WorkingAction {
-  init() {
-console.log(11)
+let WorkingAction = {
+  load: function(){
     this.socket = io();
-console.log(12)
     this.socket.emit('load data');
-console.log(13)
-    this.socket.on('all data', (data) => appDispatcher.emit('data', data));
-console.log(14)
-  }
+    this.socket.on('all data', (data) => AppDispatcher.emit('data', data));
+  },
 
-  add(text) {
+  add: function(text){
     this.socket.emit('add', text);
-  }
+  },
 
-  delete(index) {
-    this.socket.emit('delete', index);
+  remove: function(index){
+    this.socket.emit('remove', index);
   }
-}
+};
 
-export var workingAction = new WorkingAction();
+export default WorkingAction;
