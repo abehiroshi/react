@@ -1,0 +1,18 @@
+web:
+  build: .
+  links:
+    - db
+  volumes:
+    - /vagrant/index.js:/app/index.js
+    - /vagrant/public:/app/public
+    - /vagrant/src:/app/src
+  ports:
+    - "3000:3000"
+  environment:
+    NODE_ENV: development
+  command: npm run start
+db:
+  image: dockerfile/mongodb
+  ports:
+    - "28017:28017"
+  command: mongod --rest --httpinterface
