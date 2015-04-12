@@ -1,38 +1,40 @@
 'use strict';
 
-var Immutable = require('immutable');
+import io from 'socket.io';
+import working from '../model/working';
 
-export default function Socket(io){
-  var data = Immutable.List();
+function handleError(err){
+  if (!err) return false;
+  console.log('socket error : ' + err);
+  socket.emit('error', err);
+  return true;
+}
 
-  io.on('connection', function(socket){
-    console.log('connected');
+export default function(server){
+  io(server).on('connection', function(socket){
+    console.log('socket connection');
+    working.register(socket);
     socket
-      .on('load data', function(msg){
-        console.log('load data');
-        this.emit('all data', data);
+      .on('find working', (msg)=>{
+        console.log('socket load working');
+        working.find(msg || {}, (err, items)=>{
+          if (handleError(err)) return;
+          socket.emit('working:find', items);
+        });
       })
-      .on('add', function(msg){
-        console.log('add: ' + msg);
-        if (msg){
-          data = data.push(msg);
-          this.emit('all data', data);
-          this.broadcast.emit('all data', data);
-        }
+      .on('add working', (msg)=>{
+        console.log('socket add working: ' + msg);
+        new working(msg).save(handleError);
       })
-      .on('remove', function(msg){
-        console.log('remove: ' + msg);
-        if (msg){
-          data = data.remove(msg);
-          this.emit('all data', data);
-          this.broadcast.emit('all data', data);
-        }
-      })
-      .on('log', function(msg){
-        console.log('log: ' + msg);
+      .on('remove working', (msg)=>{
+        console.log('socket remove working : ' + msg);
+        working.findById(msg, (err, doc)=>{
+          if (handleError(err)) return;
+          doc.remove(handleError);
+        });
       })
       .on('disconnect', function(msg){
-        console.log('disconnected');
+        console.log('socket disconnect');
       });
   });
 }

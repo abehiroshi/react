@@ -1,47 +1,49 @@
 'use strict';
 
 import React from 'react/addons';
-import Immutable from 'immutable';
 import WorkingAction from '../action/WorkingAction';
 import WorkingStore from '../store/WorkingStore';
 
 export default React.createClass({
   mixins: [React.addons.LinkedStateMixin],
 
-  getInitialState: function(){
-    return { text: '', record: Immutable.List() };
+  getInitialState(){
+    return { text: '', workings: [] };
   },
 
-  componentDidMount: function(){
+  componentDidMount(){
     this.action = WorkingAction;
     this.store = WorkingStore;
     this.load = this.load.bind(this);
 
-    this.store.on('change', this.load);
+    this.store.on('change working', this.load);
     this.action.load();
   },
 
-  componentWillUnmount: function(){
-    WokingStore.removeEventListener('change', this.load);
+  componentWillUnmount(){
+    this.store.removeEventListener('change working', this.load);
   },
 
-  load: function(){
+  load(){
     console.log('component load');
-    this.setState({record: this.store.getData()});
+    this.setState({workings: this.store.getData()});
   },
 
-  add: function(){
+  add(){
+    if (!this.state.text) return;
+    console.log('component add : ' + this.state.text);
     this.action.add(this.state.text);
     this.clearText();
   },
 
-  clearText: function(){
+  clearText(){
     this.setState({text: ''});
     React.findDOMNode(this.refs.text).focus();
   },
 
-  remove: function(i){
-    this.action.remove(i);
+  remove(id){
+    console.log('component remove : ' + id)
+    this.action.remove(id);
   },
 
   render: function(){
@@ -51,12 +53,13 @@ export default React.createClass({
           <input type="text" placeholder="input.." ref="text" valueLink={this.linkState('text')} />
           <input type="button" value="add" onClick={this.add} />
         </div>
+        <div>working</div>
         <ol>
-          {this.state.record.map((value, i) => {
+          {this.state.workings.map((value, i) => {
             return (
-              <li key={i}>
-                <input key={i} type="button" value="delete" onClick={()=>this.remove(i)} />
-                {value}
+              <li key={value._id}>
+                <input key={value._id} type="button" value="delete" onClick={()=>this.remove(value._id)} />
+                {value.text}
               </li>
             )
           })}

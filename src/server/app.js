@@ -2,27 +2,27 @@
 
 import Express from 'express';
 import {Server} from 'http';
-import Socketio from 'socket.io';
-import Immutable from 'immutable';
+import mongoose from 'mongoose';
+import config from '../config';
 import socket from './socket';
 
 var app = Express();
 var http = Server(app);
-var io = Socketio(http);
+socket(http);
+mongoose.connect(config.mongo.uri);
 
-export default function App(dirname){
+export default function(dirname){
   app.get('/', (req, res)=>{
-    res.redirect('/view/index.html');
+    console.log('request : ' + req.path);
+    res.redirect('/view/');
   });
 
   app.use('/view', (req, res, next)=>{
-    console.log(req.path);
+    console.log('request : ' + req.path);
     res.sendFile(dirname + req.path);
   });
 
-  socket(io);
-
-  http.listen(3000, ()=>{
-    console.log('listening on *:3000');
+  http.listen(config.port, ()=>{
+    console.log('listening on *:' + config.port);
   });
 }

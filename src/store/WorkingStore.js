@@ -1,25 +1,24 @@
 'use strict';
 
-import Immutable from 'immutable';
 import {EventEmitter} from 'events';
 import assign from 'object-assign';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
-let storeData = Immutable.List();
+let workingData = [];
 
 let WorkingStore = assign({}, EventEmitter.prototype, {
   getData(){
-    console.log('store getData');
-    return storeData;
+    console.log('store getWorkingData');
+    return workingData;
   },
 
   load(data){
-    console.log('store load');
-    storeData = Immutable.fromJS(data);
-    this.emit('change');
+    console.log('store load working : ' + data.length);
+    workingData = data;
+    this.emit('change working');
   }
 });
 
-AppDispatcher.on('data', WorkingStore.load.bind(WorkingStore));
+AppDispatcher.on('load working', WorkingStore.load.bind(WorkingStore));
 
 export default WorkingStore;
