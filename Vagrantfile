@@ -17,6 +17,7 @@ Vagrant.configure(2) do |config|
     sudo echo 'nameserver 8.8.8.8' >  /etc/resolv.conf
     sudo echo 'nameserver 8.8.4.4' >> /etc/resolv.conf
 
+    sleep 5
     sudo cp -rf /var/lib/boot2docker/tls /vagrant/.vagrant/
     sudo echo 'cp -rf /var/lib/boot2docker/tls /vagrant/.vagrant/' >> /var/lib/boot2docker/bootlocal.sh
   SHELL

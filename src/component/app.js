@@ -3,6 +3,7 @@
 import React from 'react/addons';
 import WorkingAction from '../action/WorkingAction';
 import WorkingStore from '../store/WorkingStore';
+import {Table, Button, Input} from 'react-bootstrap';
 
 export default React.createClass({
   mixins: [React.addons.LinkedStateMixin],
@@ -49,21 +50,30 @@ export default React.createClass({
   render: function(){
     return (
       <div>
-        <div>
-          <input type="text" placeholder="input.." ref="text" valueLink={this.linkState('text')} />
-          <input type="button" value="add" onClick={this.add} />
-        </div>
-        <div>working</div>
-        <ol>
-          {this.state.workings.map((value, i) => {
-            return (
-              <li key={value._id}>
-                <input key={value._id} type="button" value="delete" onClick={()=>this.remove(value._id)} />
-                {value.text}
-              </li>
-            )
-          })}
-        </ol>
+        <form className="form-inline">
+          <Input type="text" label="worktime" placeholder="4/10 1h meeting" ref="text" valueLink={this.linkState("text")} />
+          <Button onClick={this.add} bsStyle="primary" bsSize="small">追加</Button>
+        </form>
+        <Table striped condensed hover>
+          <thead>
+            <tr>
+              <th className="col-xs-1">#</th><th>content</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.workings.map((value, i) => {
+              return (
+                <tr>
+                  <td>
+                    {i+1}
+                    <Button onClick={()=>this.remove(value._id)} className="close">&times;</Button>
+                  </td>
+                  <td>{value.text}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </Table>
       </div>
     )
   }
