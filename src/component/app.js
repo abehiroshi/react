@@ -50,24 +50,29 @@ export default React.createClass({
   render: function(){
     return (
       <div>
-        <form className="form-inline">
-          <Input type="text" label="worktime" placeholder="4/10 1h meeting" ref="text" valueLink={this.linkState("text")} />
+        <div className="form-inline">
+          <Input type="text" placeholder="4/10 9:00 18:00 8h hino" ref="text" valueLink={this.linkState("text")}
+            hasFeedback wrapperClassName="col-xs-6" />
           <Button onClick={this.add} bsStyle="primary" bsSize="small">追加</Button>
-        </form>
+        </div>
         <Table striped condensed hover>
           <thead>
             <tr>
-              <th className="col-xs-1">#</th><th>content</th>
+              <th className="col-xs-1">#</th>
+              <th className="col-xs-2">日時</th>
+              <th className="col-xs-1">時間</th>
+              <th className="col-xs-3">摘要</th>
+              <th className="col-xs-5">入力値</th>
             </tr>
           </thead>
           <tbody>
             {this.state.workings.map((value, i) => {
               return (
                 <tr>
-                  <td>
-                    {i+1}
-                    <Button onClick={()=>this.remove(value._id)} className="close">&times;</Button>
-                  </td>
+                  <td>{i+1}<Button onClick={()=>this.remove(value._id)} className="close">&times;</Button></td>
+                  <td>{value.date} {value.timeFrom}-{value.timeTo}</td>
+                  <td>{value.workTime}</td>
+                  <td>{value.remarks}</td>
                   <td>{value.text}</td>
                 </tr>
               )
