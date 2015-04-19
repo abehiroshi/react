@@ -1,0 +1,11 @@
+machine:
+  services:
+    - docker
+dependencies:
+  override:
+    - sh -e build.sh
+deployment:
+  master:
+    branch: master
+    commands:
+      - sh -e deploy.sh
