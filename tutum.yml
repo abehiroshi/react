@@ -1,0 +1,6 @@
+buildline:
+  image: tutum.co/abehiroshi/worklog:latest
+  autorestart: always
+  autoredeploy: true
+  ports:
+    - "80:3000"
