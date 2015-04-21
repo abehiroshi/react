@@ -8,8 +8,6 @@ web:
     - /vagrant/src:/app/src
   ports:
     - "3000:3000"
-  environment:
-    NODE_ENV: development
   command: npm run start
 db:
   image: dockerfile/mongodb
