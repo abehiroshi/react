@@ -1,6 +1,14 @@
-buildline:
+web:
   image: tutum.co/abehiroshi/worklog:latest
+  links:
+    - db
   autorestart: always
   autoredeploy: true
   ports:
-    - "80:3000"
+    - "3000:3000"
+  command: npm run start
+db:
+  image: dockerfile/mongodb
+  ports:
+    - "28017:28017"
+  command: mongod --rest --httpinterface
