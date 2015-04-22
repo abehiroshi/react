@@ -47,12 +47,16 @@ export default React.createClass({
     this.action.remove(id);
   },
 
+  handleKeyDown(e){
+    if (e.key == 'Enter') this.add();
+  },
+
   render: function(){
     return (
       <div>
         <div className="form-inline">
           <Input type="text" placeholder="4/10 9:00 18:00 8h hino" ref="text" valueLink={this.linkState("text")}
-            hasFeedback wrapperClassName="col-xs-6" />
+            hasFeedback wrapperClassName="col-xs-6" onKeyDown={this.handleKeyDown}/>
           <Button onClick={this.add} bsStyle="primary" bsSize="small">追加</Button>
         </div>
         <Table striped condensed hover>
