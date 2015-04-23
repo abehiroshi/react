@@ -1,4 +1,4 @@
-FROM dockerfile/nodejs
+FROM node:0.12
 MAINTAINER Abe Hiroshi <abe@x-wave.co.jp>
 
 WORKDIR /app
