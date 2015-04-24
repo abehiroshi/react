@@ -10,7 +10,7 @@ web:
     - "3000:3000"
   command: npm run start
 db:
-  image: mongodb
+  image: mongo
   ports:
     - "28017:28017"
   command: mongod --rest --httpinterface
