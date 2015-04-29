@@ -6,7 +6,7 @@ var working = mongoose.model('Working', new Schema({
   worker: { type: String },
   timeFrom: { type: Date },
   timeTo: { type: Date },
-  workTime: { type: String },
+  workTime: { type: Number },
   remarks: { type: String },
   text: { type: String, required: 'テキストを入力してください'}
 }));
