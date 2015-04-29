@@ -8,4 +8,8 @@ deployment:
   master:
     branch: master
     commands:
-      - sh -e deploy.sh
+      - IMAGE_TAG=latest sh -e deploy.sh
+  development:
+    branch: development
+    commands:
+      - IMAGE_TAG=dev sh -e deploy.sh
