@@ -39,8 +39,8 @@ let WorkingAction = {
           convert: v => moment(v, 'HH:mm').set({year: working.timeFrom.year(), month: working.timeFrom.month(), date: working.timeFrom.date()})
         },
         workTime: {
-          pattern: '[0-9]+[.]?[0-9]*[hH]',
-          convert: v => v
+          pattern: '[0-9]+[.]?[0-9]*[hH]|',
+          convert: v => v.length > 0 ? v.substring(0, v.length-1) : Math.round(working.timeTo.diff(working.timeFrom, 'hours', true) * 10) / 10
         },
         remarks: {
           pattern: '.*',

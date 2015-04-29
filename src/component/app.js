@@ -63,7 +63,7 @@ export default React.createClass({
       <div>
         <div className="form-inline">
           <Input type="text" placeholder="Your name" ref="worker" valueLink={this.linkState("worker")}
-            hasFeedback wrapperClassName="col-xs-4" onBlur={this.handleChangeWorker} />
+            hasFeedback wrapperClassName="col-xs-2" onBlur={this.handleChangeWorker} />
           <Input type="text" placeholder="4/10 9:00 18:00 8h project" ref="input" valueLink={this.linkState("input")}
             hasFeedback wrapperClassName="col-xs-8" onKeyDown={this.handleKeyDownInput} />
           <Button onClick={this.add} bsStyle="primary" bsSize="small">追加</Button>
@@ -80,15 +80,15 @@ export default React.createClass({
             </tr>
           </thead>
           <tbody>
-            {this.state.workings.map((value, i) => {
+            {this.state.workings.map((v, i) => {
               return (
                 <tr>
-                  <td>{i+1}<Button onClick={()=>this.remove(value._id)} className="close">&times;</Button></td>
-                  <td>{value.worker}</td>
-                  <td>{moment(value.timeFrom).format('MM/DD')} {moment(value.timeFrom).format('HH:mm')} - {moment(value.timeTo).format('HH:mm')}</td>
-                  <td>{value.workTime}</td>
-                  <td>{value.remarks}</td>
-                  <td>{value.text}</td>
+                  <td>{i+1}<Button onClick={()=>this.remove(v._id)} className="close">&times;</Button></td>
+                  <td>{v.worker}</td>
+                  <td>{moment(v.timeFrom).format('MM/DD')} {moment(v.timeFrom).format('HH:mm')} - {moment(v.timeTo).format('HH:mm')}</td>
+                  <td>{v.workTime} h</td>
+                  <td>{v.remarks}</td>
+                  <td>{v.text}</td>
                 </tr>
               )
             })}
