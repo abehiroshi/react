@@ -3,9 +3,9 @@
 import mongoose, {Schema} from 'mongoose';
 
 var working = mongoose.model('Working', new Schema({
-  date: { type: String },
-  timeFrom: { type: String},
-  timeTo: { type: String },
+  worker: { type: String },
+  timeFrom: { type: Date },
+  timeTo: { type: Date },
   workTime: { type: String },
   remarks: { type: String },
   text: { type: String, required: 'テキストを入力してください'}
