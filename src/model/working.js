@@ -3,10 +3,10 @@
 import mongoose, {Schema} from 'mongoose';
 
 var working = mongoose.model('Working', new Schema({
-  date: { type: String },
-  timeFrom: { type: String},
-  timeTo: { type: String },
-  workTime: { type: String },
+  worker: { type: String },
+  timeFrom: { type: Date },
+  timeTo: { type: Date },
+  workTime: { type: Number },
   remarks: { type: String },
   text: { type: String, required: 'テキストを入力してください'}
 }));

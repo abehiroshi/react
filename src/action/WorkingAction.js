@@ -6,45 +6,61 @@ import moment from 'moment';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
 let WorkingAction = {
+  init(){
+    this.dispatcher = AppDispatcher;
+
+    console.log('action socket init');
+    this.socket = io();
+    this.socket.on('working:find', (data) => this.dispatcher.emit('load working', data));
+    this.socket.on('working:save', () => this.socket.emit('find working'));
+    this.socket.on('working:remove', () => this.socket.emit('find working'));
+    this.socket.on('error', console.log);
+
+    this.init = null;
+  },
+
   load(){
     console.log('action load');
-    if (!this.socket){
-      console.log('action socket init');
-      this.socket = io();
-      this.socket.on('working:find', (data) => AppDispatcher.emit('load working', data));
-      this.socket.on('working:save', () => this.socket.emit('find working'));
-      this.socket.on('working:remove', () => this.socket.emit('find working'));
-      this.socket.on('error', console.log);
-    }
-
     this.socket.emit('find working');
   },
 
-  add(text){
+  add(worker, text){
     console.log('action add : ' + text);
 
-    let working = _.reduce(
+    let working = { worker: worker, text: text, timeFrom: moment(), timeTo: moment() };
+    working = _.reduce(
       {
-        date: '[01]?[0-9][-/][0-2]?[0-9]|[0-9]{4}',
-        timeFrom: '[0-2]?[0-9]:[0-5]?[0-9]|[0-9]{4}',
-        timeTo: '[0-2]?[0-9]:[0-5]?[0-9]|[0-9]{4}',
-        workTime: '[0-9]+[.]?[0-9]*[hH]',
-        remarks: '.*'
+        timeFrom: {
+          pattern: '(?:[01]?[0-9]/[0-2]?[0-9] )?[0-2]?[0-9]:[0-5]?[0-9]',
+          convert: v => v.length > 5 ? moment(v, 'MM/DD HH:mm') : moment(v, 'HH:mm')
+        },
+        timeTo: {
+          pattern: '[0-2]?[0-9]:[0-5]?[0-9]',
+          convert: v => moment(v, 'HH:mm').set({year: working.timeFrom.year(), month: working.timeFrom.month(), date: working.timeFrom.date()})
+        },
+        workTime: {
+          pattern: '[0-9]+[.]?[0-9]*[hH]|',
+          convert: v => v.length > 0 ? v.substring(0, v.length-1) : Math.round(working.timeTo.diff(working.timeFrom, 'hours', true) * 10) / 10
+        },
+        remarks: {
+          pattern: '.*',
+          convert: v => v
+        }
       },
-      (result, pattern, key)=>{
-        let matched = text.match('(.*?)(' + pattern + ')(.*)');
+      (result, attribute, key)=>{
+        let matched = text.match('(.*?)(' + attribute.pattern + ')(.*)');
         if (matched){
-          console.log(key + ': ' + JSON.stringify(matched));
-          result[key] = matched[2];
+          console.log(key + ': ' + JSON.stringify(matched[2]));
+          result[key] = attribute.convert(matched[2]);
           text = matched[1] + matched[3];
         }
         return result;
       },
-      {text: text}
+      working
     );
 
     // 日付入力ない場合は当日
-    if (!working.date) working.date = moment().format('M/D');
+    if (!working.date) working.date = moment().toDate();
 
     this.socket.emit('add working', working);
   },
@@ -52,7 +68,13 @@ let WorkingAction = {
   remove(id){
     console.log('action remove : ' + id);
     this.socket.emit('remove working', id);
+  },
+
+  filter(condition){
+    this.dispatcher.emit('filter working', condition);
   }
 };
+
+WorkingAction.init();
 
 export default WorkingAction;
