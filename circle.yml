@@ -3,7 +3,8 @@ machine:
     - docker
 dependencies:
   override:
-    - sh -e build.sh
+    - set -u
+    - docker build -t $IMAGE_NAME .
 deployment:
   master:
     branch: master
