@@ -1,13 +1,14 @@
 {
-  "name": "react-flux",
+  "name": "worklog",
   "version": "0.0.1",
-  "description": "react flux",
+  "description": "worklog",
   "private": true,
   "scripts": {
     "start": "npm run watch & npm run server",
     "build": "browserify src/client/index.js -t babelify | uglifyjs > public/bundle.js",
     "watch": "watchify -d src/client/index.js -t babelify -o public/bundle.js -v",
-    "server": "node index.js"
+    "server": "node index.js",
+    "test": "echo no tests."
   },
   "dependencies": {
     "babel": "^5.0.12",

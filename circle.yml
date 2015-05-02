@@ -5,6 +5,9 @@ dependencies:
   override:
     - set -u
     - docker build -t $IMAGE_NAME .
+test:
+  override:
+    - docker run --rm $IMAGE_NAME npm run test
 deployment:
   master:
     branch: master
