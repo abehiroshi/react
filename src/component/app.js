@@ -4,7 +4,7 @@ import moment from 'moment';
 import React from 'react/addons';
 import WorkingAction from '../action/WorkingAction';
 import WorkingStore from '../store/WorkingStore';
-import {Table, Button, Input} from 'react-bootstrap';
+import {Table, Button, Input, Row, Col} from 'react-bootstrap';
 
 export default React.createClass({
   mixins: [React.addons.LinkedStateMixin],
@@ -16,7 +16,6 @@ export default React.createClass({
   componentDidMount(){
     this.action = WorkingAction;
     this.store = WorkingStore;
-    this.load = this.load.bind(this);
 
     this.store.on('change working', this.load);
     this.action.load();
@@ -61,34 +60,44 @@ export default React.createClass({
   render: function(){
     return (
       <div>
-        <div className="form-inline">
-          <Input type="text" placeholder="Your name" ref="worker" valueLink={this.linkState("worker")}
-            hasFeedback wrapperClassName="col-xs-2" onBlur={this.handleChangeWorker} />
-          <Input type="text" placeholder="4/10 9:00 18:00 8h project" ref="input" valueLink={this.linkState("input")}
-            hasFeedback wrapperClassName="col-xs-8" onKeyDown={this.handleKeyDownInput} />
-          <Button onClick={this.add} bsStyle="primary" bsSize="small">追加</Button>
+        <div className="form-horizontal">
+          <Input wrapperClassName="wrapper">
+            <Row>
+              <Col xs={3} lg={3}>
+                <Input type="text" label="名前" placeholder="Your name"
+                  hasFeedback labelClassName="col-xs-4 col-lg-4" wrapperClassName="col-xs-6 col-lg-6"
+                  ref="worker" valueLink={this.linkState("worker")}
+                  onBlur={this.handleChangeWorker} />
+              </Col>
+              <Col xs={6} lg={6}>
+                <Input type="text" label="入力" placeholder="4/10 9:00 18:00 8h project" addonAfter="Enter"
+                  hasFeedback labelClassName="col-xs-2 col-lg-2" wrapperClassName="col-xs-8 col-lg-8"
+                  ref="input" valueLink={this.linkState("input")} onKeyDown={this.handleKeyDownInput} />
+              </Col>
+            </Row>
+          </Input>
         </div>
-        <Table striped condensed hover>
+        <Table striped condensed hover responsive>
           <thead>
             <tr>
-              <th className="col-xs-1">#</th>
-              <th className="col-xs-1">名前</th>
-              <th className="col-xs-2">日時</th>
-              <th className="col-xs-1">時間</th>
-              <th className="col-xs-3">摘要</th>
-              <th className="col-xs-5">入力値</th>
+              <th className="col-xs-2 col-lg-2">日時</th>
+              <th className="col-xs-1 col-lg-1">時間</th>
+              <th className="col-xs-3 col-lg-3">摘要</th>
+              <th className="col-xs-2 col-lg-2">名前</th>
             </tr>
           </thead>
           <tbody>
             {this.state.workings.map((v, i) => {
               return (
-                <tr>
-                  <td>{i+1}<Button onClick={()=>this.remove(v._id)} className="close">&times;</Button></td>
-                  <td>{v.worker}</td>
-                  <td>{moment(v.timeFrom).format('MM/DD')} {moment(v.timeFrom).format('HH:mm')} - {moment(v.timeTo).format('HH:mm')}</td>
+                <tr key={v._id}>
+                  <td>
+                    <Button bsStyle="danger" bsSize="xsmall" style={{marginTop: '0px', marginBottom: '0px'}}
+                      onClick={()=>this.remove(v._id)}>&times;</Button>
+                    {moment(v.timeFrom).format('MM/DD HH:mm')} - {moment(v.timeTo).format('HH:mm')}
+                  </td>
                   <td>{v.workTime} h</td>
                   <td>{v.remarks}</td>
-                  <td>{v.text}</td>
+                  <td>{v.worker}</td>
                 </tr>
               )
             })}

@@ -3,7 +3,11 @@ machine:
     - docker
 dependencies:
   override:
-    - sh -e build.sh
+    - set -u
+    - docker build -t $IMAGE_NAME .
+test:
+  override:
+    - docker run $IMAGE_NAME npm run test
 deployment:
   master:
     branch: master
