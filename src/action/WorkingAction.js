@@ -27,36 +27,63 @@ let WorkingAction = {
   add(worker, text){
     console.log('action add : ' + text);
 
-    let working = { worker: worker, text: text, timeFrom: moment(), timeTo: moment() };
-    working = _.reduce(
-      {
-        timeFrom: {
-          pattern: '(?:[01]?[0-9]/[0-2]?[0-9] )?[0-2]?[0-9]:[0-5]?[0-9]',
-          convert: v => v.length > 5 ? moment(v, 'MM/DD HH:mm') : moment(v, 'HH:mm')
+    let now = moment();
+    let working = { worker: worker, text: text, timeFrom: now, timeTo: now };
+    _.reduce(
+      [
+        {
+          pattern: '[01]?[0-9]/[0-2]?[0-9]',
+          convert: v => {
+            var d = moment(v, 'MM/DD');
+            working.timeFrom = working.timeFrom.set({ month: d.month(), date: d.date() });
+            working.timeTo   = moment(working.timeFrom);
+          }
         },
-        timeTo: {
+        {
           pattern: '[0-2]?[0-9]:[0-5]?[0-9]',
-          convert: v => moment(v, 'HH:mm').set({year: working.timeFrom.year(), month: working.timeFrom.month(), date: working.timeFrom.date()})
+          convert: v => {
+            var m = moment(v, 'HH:mm');
+              working.timeFrom = working.timeFrom.set({ hour: m.hour(), minute: m.minute() });
+              working.timeTo   = moment(working.timeFrom);
+          }
         },
-        workTime: {
-          pattern: '[0-9]+[.]?[0-9]*[hH]|',
-          convert: v => v.length > 0 ? v.substring(0, v.length-1) : Math.round(working.timeTo.diff(working.timeFrom, 'hours', true) * 10) / 10
+        {
+          pattern: '[0-2]?[0-9]:[0-5]?[0-9]',
+          convert: v => {
+            var m = moment(v, 'HH:mm');
+            working.timeTo = working.timeTo.set({ hour: m.hour(), minute: m.minute() });
+            if (working.timeTo.diff(working.timeFrom) < 0){
+              working.timeTo.add(1, 'days');
+            }
+          }
         },
-        remarks: {
+        {
+          pattern: '[0-9]+[.]?[0-9]*[hH]',
+          convert: v => {
+            working.workTime = v.substring(0, v.length-1);
+          }
+        },
+        {
+          key: 'remarks',
           pattern: '.*',
-          convert: v => v
+          convert: v => {
+            working.remarks = v;
+            if (!working.workTime){
+              working.workTime = Math.round(working.timeTo.diff(working.timeFrom, 'hours', true) * 10) / 10;
+            }
+          }
         }
-      },
-      (result, attribute, key)=>{
-        let matched = text.match('(.*?)(' + attribute.pattern + ')(.*)');
+      ],
+      (result, val)=>{
+        let matched = result.match('(.*?)(' + val.pattern + ')(.*)');
         if (matched){
-          console.log(key + ': ' + JSON.stringify(matched[2]));
-          result[key] = attribute.convert(matched[2]);
-          text = matched[1] + matched[3];
+          console.log(val.key + ': ' + JSON.stringify(matched[2]));
+          val.convert(matched[2]);
+          result = matched[1] + matched[3];
         }
         return result;
       },
-      working
+      text
     );
 
     // 日付入力ない場合は当日
