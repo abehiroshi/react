@@ -7,7 +7,7 @@ dependencies:
     - docker build -t $IMAGE_NAME .
 test:
   override:
-    - docker run --rm $IMAGE_NAME npm run test
+    - docker run $IMAGE_NAME npm run test
 deployment:
   master:
     branch: master
